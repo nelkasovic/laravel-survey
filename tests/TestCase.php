@@ -8,9 +8,6 @@ use Wimando\Survey\SurveyServiceProvider;
 
 class TestCase extends Orchestra
 {
-    /**
-     * Setup test environment.
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -19,12 +16,8 @@ class TestCase extends Orchestra
 
         $this->setUpDatabase();
 
-        $this->setUpFactories();
     }
 
-    /**
-     * Setup test database.
-     */
     protected function setUpDatabase()
     {
         //Package migrations
@@ -41,28 +34,14 @@ class TestCase extends Orchestra
         (new \CreateSurveySectionsTable())->up();
     }
 
-    /**
-     * Setup test factories.
-     */
-    protected function setUpFactories()
-    {
-        $this->withFactories(__DIR__ . '/../database/factories');
-    }
-
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             SurveyServiceProvider::class,
         ];
     }
 
-    /**
-     * Sign in a dummy user.
-     *
-     * @param User|null $user
-     * @return User
-     */
-    protected function signIn(User $user = null)
+    protected function signIn(User $user = null): User
     {
         $user = $user ?? User::forceCreate([
                 'name' => 'John',

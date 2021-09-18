@@ -2,39 +2,40 @@
 
 namespace Wimando\Survey\Tests;
 
+use Wimando\Survey\Facades\Factories\Models\QuestionFactory;
 use Wimando\Survey\Models\Question;
 use Wimando\Survey\Models\Survey;
 
 class QuestionTest extends TestCase
 {
     /** @test */
-    public function it_has_content()
+    public function testQuestionHasContent()
     {
-        $question = create(Question::class, ['content' => 'How many cats do you have?']);
+        $question = Question::factory()->create(['content' => 'How many cats do you have?']);
 
         $this->assertEquals('How many cats do you have?', $question->content);
     }
 
     /** @test */
-    public function it_has_a_type()
+    public function testQuestionHasType()
     {
-        $question = create(Question::class, ['type' => 'radio']);
+        $question = Question::factory()->create(['type' => 'radio']);
 
         $this->assertEquals('radio', $question->type);
     }
 
     /** @test */
-    public function it_has_a_key()
+    public function testQuestionHasKey()
     {
-        $question = create(Question::class);
 
+        $question = Question::factory()->create();
         $this->assertNotNull($question->key);
     }
 
     /** @test */
-    public function it_may_have_rules()
+    public function testQuestionMayHaveRules()
     {
-        $question = new Question([
+        $question = QuestionFactory::create([
             'content' => 'How many cats do you have?',
             'rules' => ['numeric', 'min:1'],
         ]);
@@ -43,9 +44,9 @@ class QuestionTest extends TestCase
     }
 
     /** @test */
-    public function it_may_have_options()
+    public function testQuestionMayHaveOptions()
     {
-        $question = new Question([
+        $question = QuestionFactory::create([
             'content' => 'How many cats do you have?',
             'options' => ['One', 'Two', 'Three'],
         ]);
@@ -54,9 +55,9 @@ class QuestionTest extends TestCase
     }
 
     /** @test */
-    public function it_automatically_persist_the_same_survey_id_as_the_parent_section()
+    public function testQuestionAutomaticallyPersistTheSameSurveyIdAsTheParentSection()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
         $section = $survey->sections()->create(['name' => 'Basic Information']);
 

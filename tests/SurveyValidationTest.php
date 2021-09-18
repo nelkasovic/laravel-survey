@@ -10,11 +10,11 @@ use Wimando\Survey\Models\Survey;
 class SurveyValidationTest extends TestCase
 {
     /** @test */
-    public function it_can_be_validated()
+    public function testSurveyCanBeValidated()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
-        $survey->questions()->save(make(Question::class, ['rules' => ['numeric']]));
+        $survey->questions()->save(Question::factory()->create(['rules' => ['numeric']]));
 
         $validator = Validator::make(['q1' => 'Not a number'], $survey->rules);
 

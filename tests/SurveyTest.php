@@ -2,23 +2,24 @@
 
 namespace Wimando\Survey\Tests;
 
+use Wimando\Survey\Facades\Factories\Models\SurveyFactory;
 use Wimando\Survey\Models\Question;
 use Wimando\Survey\Models\Survey;
 
 class SurveyTest extends TestCase
 {
     /** @test */
-    public function it_has_a_name()
+    public function testSurveyHasName()
     {
-        $survey = create(Survey::class, ['name' => 'Cat Survey']);
+        $survey = Survey::factory()->create(['name' => 'Cat Survey']);
 
         $this->assertEquals('Cat Survey', $survey->name);
     }
 
     /** @test */
-    public function it_may_have_settings()
+    public function testSurveyHasSettings()
     {
-        $survey = new Survey([
+        $survey = SurveyFactory::create([
             'name' => 'Cat Survey',
             'settings' => ['accept-guest-entries' => true],
         ]);
@@ -27,9 +28,9 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_can_add_questions()
+    public function testSurveyCanAddQuestions()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
         $survey->questions()->create(['content' => 'How many cats do you have?']);
 
@@ -37,11 +38,11 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_can_add_multiple_questions_at_once()
+    public function testSurveyCanAddMultipleQuestionsAtOnce()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
-        $questions = factory(Question::class, 2)->create();
+        $questions = Question::factory()->count(2)->create();
 
         $survey->questions()->saveMany($questions);
 
@@ -49,12 +50,12 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_combines_the_rules_of_its_questions()
+    public function testSurveyCombinesTheRulesOfItsQuestions()
     {
-        $q1 = create(Question::class, ['rules' => ['numeric', 'min:0']]);
-        $q2 = create(Question::class, ['rules' => ['date']]);
+        $q1 = Question::factory()->create(['rules' => ['numeric', 'min:0']]);
+        $q2 = Question::factory()->create(['rules' => ['date']]);
 
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
         $survey->questions()->saveMany([$q1, $q2]);
 
@@ -62,9 +63,9 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_has_a_limit_per_participant()
+    public function testSurveyHasLimitPerParticipant()
     {
-        $survey = new Survey([]);
+        $survey = Survey::factory()->create();
 
         $this->assertEquals(1, $survey->limitPerParticipant());
 
@@ -76,9 +77,10 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_may_have_no_limits_per_participant()
+    public function testSurveyMayHaveNoLimitsPerParticipant()
     {
-        $survey = new Survey([
+
+        $survey = SurveyFactory::create([
             'settings' => ['limit-per-participant' => -1],
         ]);
 
@@ -86,17 +88,18 @@ class SurveyTest extends TestCase
     }
 
     /** @test */
-    public function it_does_not_accept_guest_entries_by_default()
+    public function testSurveyDoesNotAcceptGuestEntriesByDefault()
     {
-        $survey = new Survey([]);
+        $survey = SurveyFactory::create();
 
         $this->assertFalse($survey->acceptsGuestEntries());
     }
 
     /** @test */
-    public function it_may_accept_guest_entries()
+    public function testSurveyMayAcceptGuestEntries()
     {
-        $survey = new Survey([
+
+        $survey = SurveyFactory::create([
             'settings' => ['accept-guest-entries' => true],
         ]);
 

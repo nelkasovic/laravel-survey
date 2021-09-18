@@ -2,6 +2,7 @@
 
 namespace Wimando\Survey\Models;
 
+use Database\Factories\QuestionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,5 +85,10 @@ class Question extends Model
     public function scopeWithoutSection($query)
     {
         return $query->where('section_id', null);
+    }
+
+    protected static function newFactory(): QuestionFactory
+    {
+        return QuestionFactory::new();
     }
 }

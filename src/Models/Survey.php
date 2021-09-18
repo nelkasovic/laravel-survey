@@ -2,6 +2,7 @@
 
 namespace Wimando\Survey\Models;
 
+use Database\Factories\SurveyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -96,5 +97,10 @@ class Survey extends Model
         return $this->questions->mapWithKeys(function ($question) {
             return [$question->key => $question->rules];
         })->all();
+    }
+
+    protected static function newFactory(): SurveyFactory
+    {
+        return SurveyFactory::new();
     }
 }

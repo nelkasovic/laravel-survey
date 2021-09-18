@@ -2,6 +2,7 @@
 
 namespace Wimando\Survey\Models;
 
+use Database\Factories\EntryFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -148,5 +149,10 @@ class Entry extends Model
         if ($count >= $limit) {
             throw new MaxEntriesPerUserLimitExceeded();
         }
+    }
+
+    protected static function newFactory(): EntryFactory
+    {
+        return EntryFactory::new();
     }
 }

@@ -7,9 +7,9 @@ use Wimando\Survey\Models\Answer;
 class AnswerTest extends TestCase
 {
     /** @test */
-    public function it_has_a_value()
+    public function testAnswerHasAValue()
     {
-        $answer = create(Answer::class, ['value' => 'Five']);
+        $answer = Answer::factory(['value' => 'Five'])->create();
 
         $this->assertEquals('Five', $answer->value);
     }

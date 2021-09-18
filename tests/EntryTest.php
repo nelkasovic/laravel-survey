@@ -2,6 +2,7 @@
 
 namespace Wimando\Survey\Tests;
 
+use Wimando\Survey\Facades\Factories\Models\EntryFactory;
 use Wimando\Survey\Models\Entry;
 use Wimando\Survey\Models\Question;
 use Wimando\Survey\Models\Survey;
@@ -9,9 +10,10 @@ use Wimando\Survey\Models\Survey;
 class EntryTest extends TestCase
 {
     /** @test */
-    public function it_can_be_made_from_an_array()
+    public function testEntryCanBeCreatedFromArray()
     {
-        $entry = (new Entry())->fromArray([
+        $newEntry = EntryFactory::create();
+        $entry = $newEntry->fromArray([
             1 => 'Five',
             2 => 'None of the above',
         ]);
@@ -20,31 +22,33 @@ class EntryTest extends TestCase
     }
 
     /** @test */
-    public function it_accepts_a_survey()
+    public function testEntryAcceptsASurvey()
     {
         $survey = $this->createSurvey();
 
-        $entry = (new Entry)->for($survey);
+        $newEntry = EntryFactory::create();
+        $entry = $newEntry->for($survey);
 
         $this->assertEquals($survey->id, $entry->survey->id);
     }
 
     /** @test */
-    public function it_accepts_a_participant()
+    public function testEntryAcceptsAParticipant()
     {
         $user = $this->signIn();
-
-        $entry = (new Entry)->by($user);
+        $newEntry = EntryFactory::create();
+        $entry = $newEntry->by($user);
 
         $this->assertEquals($user->id, $entry->participant->id);
     }
 
     /** @test */
-    public function it_can_chain_method_calls()
+    public function testEntryCanChainMethodCalls()
     {
-        $survey = $this->createSurvey(2);
+        /** @var Survey $survey */
+        $survey = $this->createSurvey();
 
-        $entry = new Entry();
+        $entry = EntryFactory::create();
 
         $entry->fromArray([
             1 => 'Five',
@@ -56,9 +60,8 @@ class EntryTest extends TestCase
 
     protected function createSurvey($questionsCount = 2)
     {
-        $survey = create(Survey::class, ['settings' => ['accept-guest-entries' => true]]);
-
-        $questions = factory(Question::class, $questionsCount)->create();
+        $survey = Survey::factory()->create(['settings' => ['accept-guest-entries' => true]]);
+        $questions = Question::factory()->count($questionsCount)->create();
 
         $survey->questions()->saveMany($questions);
 

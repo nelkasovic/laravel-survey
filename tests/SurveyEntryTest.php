@@ -4,37 +4,39 @@ namespace Wimando\Survey\Tests;
 
 use Wimando\Survey\Exceptions\GuestEntriesNotAllowedException;
 use Wimando\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use Wimando\Survey\Facades\Factories\Models\EntryFactory;
 use Wimando\Survey\Models\Entry;
 use Wimando\Survey\Models\Survey;
 
 class SurveyEntryTest extends TestCase
 {
     /** @test */
-    public function guests_may_not_create_entries_by_default()
+    public function testGuestMayNotCreateEntriesByDefault()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
         $this->expectException(GuestEntriesNotAllowedException::class);
 
-        Entry::create(['survey_id' => $survey->id]);
+        EntryFactory::create(['survey_id' => $survey->id])->save();
     }
 
     /** @test */
-    public function guests_may_create_entries_when_survey_allows_guest_entries()
+    public function testGuestMayCreateEntriesWhenSurveyAllowsGuestEntries()
     {
-        $survey = create(Survey::class, [
+        $survey = Survey::factory()->create([
             'settings' => ['accept-guest-entries' => true],
         ]);
 
-        $entry = Entry::create(['survey_id' => $survey->id]);
+        $entry = EntryFactory::create(['survey_id' => $survey->id]);
+        $entry->save();
 
         $this->assertDatabaseHas($entry->getTable(), ['id' => $entry->id]);
     }
 
     /** @test */
-    public function users_may_create_entries_when_survey_doesnt_accept_guest_entries()
+    public function testUsersMayCreateEntriesWhenSurveyDoesNotAcceptGuestEntries()
     {
-        $survey = create(Survey::class);
+        $survey = Survey::factory()->create();
 
         $user = $this->signIn();
 
@@ -44,9 +46,9 @@ class SurveyEntryTest extends TestCase
     }
 
     /** @test */
-    public function users_may_create_entries_within_the_specified_max_entries_per_user_limit()
+    public function testUsersMayCreateEntriesWithinTheSpecifiedMaxEntriesPerUserLimit()
     {
-        $survey = create(Survey::class, [
+        $survey = Survey::factory()->create([
             'settings' => ['limit-per-participant' => 1],
         ]);
 
@@ -62,9 +64,9 @@ class SurveyEntryTest extends TestCase
     }
 
     /** @test */
-    public function when_guest_entries_are_allowed_limit_per_participant_is_ignored()
+    public function testWhenGeustEntriesAreAllowedLimitPerParticipantIsIgnored()
     {
-        $survey = create(Survey::class, [
+        $survey = Survey::factory()->create([
             'settings' => [
                 'limit-per-participant' => 0,
                 'accept-guest-entries' => true,
