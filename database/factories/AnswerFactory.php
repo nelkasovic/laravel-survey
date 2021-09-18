@@ -1,12 +1,21 @@
 <?php
 
-use Faker\Generator as Faker;
-use MattDaneshvar\Survey\Models\Answer;
-use MattDaneshvar\Survey\Models\Question;
+namespace Database\Factories;
 
-$factory->define(Answer::class, function (Faker $faker) {
-    return [
-        'value' => $faker->words(3, true),
-        'question_id' => factory(Question::class)->create()->id,
-    ];
-});
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Wimando\Survey\Models\Answer;
+use Wimando\Survey\Models\Question;
+
+class AnswerFactory extends Factory
+{
+
+    protected $model = Answer::class;
+
+    public function definition(): array
+    {
+        return [
+            'value' => $this->faker->words(3, true),
+            'question_id' => Question::factory()->create()->id,
+        ];
+    }
+}

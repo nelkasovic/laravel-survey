@@ -1,19 +1,19 @@
 <?php
 
-namespace MattDaneshvar\Survey\Models;
+namespace Wimando\Survey\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Survey extends Model
 {
-    /**
-     * Survey constructor.
-     *
-     * @param array $attributes
-     */
+
+    use HasFactory;
+
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.surveys'));
         }
 
@@ -21,70 +21,41 @@ class Survey extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = ['name', 'settings'];
 
     /**
-     * The attributes that should be casted.
-     *
      * @var array
      */
     protected $casts = [
         'settings' => 'array',
     ];
 
-    /**
-     * The survey sections.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function sections()
+    public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
     }
 
-    /**
-     * The survey questions.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function questions()
+    public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
     }
 
-    /**
-     * The survey entries.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function entries()
+    public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
     }
 
-    /**
-     * Check if survey accepts guest entries.
-     *
-     * @return bool
-     */
-    public function acceptsGuestEntries()
+    public function acceptsGuestEntries(): bool
     {
         return $this->settings['accept-guest-entries'] ?? false;
     }
 
-    /**
-     * The maximum number of entries a participant may submit.
-     *
-     * @return int|null
-     */
-    public function limitPerParticipant()
+    public function limitPerParticipant(): ?int
     {
         if ($this->acceptsGuestEntries()) {
-            return;
+            return null;
         }
 
         $limit = $this->settings['limit-per-participant'] ?? 1;
@@ -92,35 +63,17 @@ class Survey extends Model
         return $limit !== -1 ? $limit : null;
     }
 
-    /**
-     * Survey entries by a participant.
-     *
-     * @param Model $participant
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function entriesFrom(Model $participant)
+    public function entriesFrom(Model $participant): HasMany
     {
         return $this->entries()->where('participant_id', $participant->id);
     }
 
-    /**
-     * Last survey entry by a participant.
-     *
-     * @param Model $participant
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function lastEntry(Model $participant = null)
+    public function lastEntry(Model $participant = null): ?HasMany
     {
         return $participant === null ? null : $this->entriesFrom($participant)->first();
     }
 
-    /**
-     * Check if a participant is eligible to submit the survey.
-     *
-     * @param Model|null $model
-     * @return bool
-     */
-    public function isEligible(Model $participant = null)
+    public function isEligible(Model $participant = null): bool
     {
         if ($participant === null) {
             return $this->acceptsGuestEntries();

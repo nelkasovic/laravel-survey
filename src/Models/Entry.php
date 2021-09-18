@@ -1,27 +1,22 @@
 <?php
 
-namespace MattDaneshvar\Survey\Models;
+namespace Wimando\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
-use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
-use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use Wimando\Survey\Exceptions\GuestEntriesNotAllowedException;
+use Wimando\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
 
 class Entry extends Model
 {
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = ['survey_id', 'participant_id'];
 
-    /**
-     * Boot the entry.
-     *
-     * @return void
-     */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -32,83 +27,45 @@ class Entry extends Model
         });
     }
 
-    /**
-     * Entry constructor.
-     *
-     * @param array $attributes
-     */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.entries'));
         }
 
         parent::__construct($attributes);
     }
 
-    /**
-     * The answers within the entry.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(Answer::class);
     }
 
-    /**
-     * The survey the entry belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function survey()
+    public function survey(): BelongsTo
     {
         return $this->belongsTo(Survey::class);
     }
 
-    /**
-     * The participant that the entry belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function participant()
+    public function participant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'participant_id');
     }
 
-    /**
-     * Set the survey the entry belongs to.
-     *
-     * @param Survey $survey
-     * @return $this
-     */
-    public function for(Survey $survey)
+    public function for(Survey $survey): Entry
     {
         $this->survey()->associate($survey);
 
         return $this;
     }
 
-    /**
-     * Set the participant who the entry belongs to.
-     *
-     * @param Model|null $model
-     * @return $this
-     */
-    public function by(Model $model = null)
+    public function by(Model $model = null): Entry
     {
         $this->participant()->associate($model);
 
         return $this;
     }
 
-    /**
-     * Create an entry from an array.
-     *
-     * @param array $values
-     * @return $this
-     */
-    public function fromArray(array $values)
+    public function fromArray(array $values): Entry
     {
         foreach ($values as $key => $value) {
             if ($value === null) {
@@ -126,9 +83,6 @@ class Entry extends Model
     }
 
     /**
-     * The answer for a given question.
-     *
-     * @param Question $question
      * @return mixed|null
      */
     public function answerFor(Question $question)
@@ -144,7 +98,7 @@ class Entry extends Model
      *
      * @return bool
      */
-    public function push()
+    public function push(): bool
     {
         $this->save();
 

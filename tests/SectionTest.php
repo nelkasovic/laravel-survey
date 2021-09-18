@@ -1,8 +1,8 @@
 <?php
 
-namespace MattDaneshvar\Survey\Tests;
+namespace Wimando\Survey\Tests;
 
-use MattDaneshvar\Survey\Models\Section;
+use Wimando\Survey\Models\Section;
 
 class SectionTest extends TestCase
 {

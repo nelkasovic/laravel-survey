@@ -1,20 +1,15 @@
 # Laravel Survey
-[![Build Status](https://travis-ci.org/matt-daneshvar/laravel-survey.svg?branch=master)](https://travis-ci.org/matt-daneshvar/laravel-survey)
-![GitHub](https://img.shields.io/github/license/matt-daneshvar/laravel-survey)
-
 Create and manage surveys within your Laravel app.
-![alt text](https://raw.githubusercontent.com/matt-daneshvar/laravel-survey/master/demo.gif)
-
 
 ## Installation
 Require the package using composer.
 ```bash
-composer require matt-daneshvar/laravel-survey
+composer require wimando/laravel-survey
 ```
 
 Publish package migrations.
 ```bash
-php artisan vendor:publish --provider="MattDaneshvar\Survey\SurveyServiceProvider" --tag="migrations" 
+php artisan vendor:publish --provider="Wimando\Survey\SurveyServiceProvider" --tag="migrations" 
 ```
 
 Run the migrations to create all survey tables.
@@ -156,9 +151,9 @@ To display survey in a card, include the `card` partial in your views.
 #### Customizing the Views
 To customize the boilerplate views shipped with this package run `package:publish` with the `views` tag.
 ```bash
-php artisan vendor:publish --provider="MattDaneshvar\Survey\SurveyServiceProvider" --tag="views"
+php artisan vendor:publish --provider="Wimando\Survey\SurveyServiceProvider" --tag="views"
 ```
-This will create a new `vendor/matt-daneshvar/survey` directory 
+This will create a new `vendor/wimando/survey` directory 
 where you can fully customize the survey views to your liking.
 
 ### Road Map

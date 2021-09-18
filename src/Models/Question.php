@@ -1,14 +1,16 @@
 <?php
 
-namespace MattDaneshvar\Survey\Models;
+namespace Wimando\Survey\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Question extends Model
 {
+    use HasFactory;
+
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id'];
@@ -18,12 +20,7 @@ class Question extends Model
         'options' => 'array',
     ];
 
-    /**
-     * Boot the question.
-     *
-     * @return void
-     */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -37,53 +34,31 @@ class Question extends Model
         });
     }
 
-    /**
-     * Question constructor.
-     *
-     * @param array $attributes
-     */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.questions'));
         }
 
         parent::__construct($attributes);
     }
 
-    /**
-     * The survey the question belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function survey()
+    public function survey(): BelongsTo
     {
         return $this->belongsTo(Survey::class);
     }
 
-    /**
-     * The section the question belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function section()
+    public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
     }
 
-    /**
-     * The answers that belong to the question.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function answers()
+    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Answer::class);
     }
 
     /**
-     * The question's validation rules.
-     *
      * @param $value
      * @return array|mixed
      */
@@ -94,12 +69,7 @@ class Question extends Model
         return $value !== null ? $value : [];
     }
 
-    /**
-     * The unique key representing the question.
-     *
-     * @return string
-     */
-    public function getKeyAttribute()
+    public function getKeyAttribute(): string
     {
         return "q{$this->id}";
     }

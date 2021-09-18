@@ -1,11 +1,11 @@
 <?php
 
-namespace MattDaneshvar\Survey\Tests;
+namespace Wimando\Survey\Tests;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use MattDaneshvar\Survey\Models\Question;
-use MattDaneshvar\Survey\Models\Survey;
+use Wimando\Survey\Models\Question;
+use Wimando\Survey\Models\Survey;
 
 class SurveyValidationTest extends TestCase
 {

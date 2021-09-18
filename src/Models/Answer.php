@@ -1,19 +1,19 @@
 <?php
 
-namespace MattDaneshvar\Survey\Models;
+namespace Wimando\Survey\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Answer extends Model
 {
-    /**
-     * Answer constructor.
-     *
-     * @param array $attributes
-     */
+
+    use HasFactory;
+
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.answers'));
         }
 
@@ -21,28 +21,16 @@ class Answer extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = ['value', 'question_id', 'entry_id'];
 
-    /**
-     * The entry the answer belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function entry()
+    public function entry(): BelongsTo
     {
         return $this->belongsTo(Entry::class);
     }
 
-    /**
-     * The question the answer belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class);
     }

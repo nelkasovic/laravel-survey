@@ -4,7 +4,7 @@
     
     @slot('report')
         @if($includeResults ?? false)
-            {{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($question))->average()) }} (Average)
+            {{ number_format((new \Wimando\Survey\Utilities\Summary($question))->average()) }} (Average)
         @endif
     @endslot
 @endcomponent

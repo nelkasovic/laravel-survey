@@ -1,10 +1,19 @@
 <?php
 
-use Faker\Generator as Faker;
-use MattDaneshvar\Survey\Models\Question;
+namespace Database\Factories;
 
-$factory->define(Question::class, function (Faker $faker) {
-    return [
-        'content' => $faker->name,
-    ];
-});
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Wimando\Survey\Models\Question;
+
+class QuestionFactory extends Factory
+{
+
+    protected $model = Question::class;
+
+    public function definition(): array
+    {
+        return [
+            'content' => $this->faker->name,
+        ];
+    }
+}

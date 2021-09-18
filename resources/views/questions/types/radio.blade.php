@@ -13,7 +13,7 @@
                    for="{{ $question->key . '-' . Str::slug($option) }}">{{ $option }}
                 @if($includeResults ?? false)
                     <span class="text-success">
-                        ({{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($question))->similarAnswersRatio($option) * 100, 2) }}%)
+                        ({{ number_format((new \Wimando\Survey\Utilities\Summary($question))->similarAnswersRatio($option) * 100, 2) }}%)
                     </span>
                 @endif
             </label>

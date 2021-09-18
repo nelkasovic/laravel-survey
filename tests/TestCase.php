@@ -1,10 +1,10 @@
 <?php
 
-namespace MattDaneshvar\Survey\Tests;
+namespace Wimando\Survey\Tests;
 
 use Illuminate\Foundation\Auth\User;
-use MattDaneshvar\Survey\SurveyServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Wimando\Survey\SurveyServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -28,17 +28,17 @@ class TestCase extends Orchestra
     protected function setUpDatabase()
     {
         //Package migrations
-        include_once __DIR__.'/../database/migrations/create_surveys_table.php.stub';
-        include_once __DIR__.'/../database/migrations/create_questions_table.php.stub';
-        include_once __DIR__.'/../database/migrations/create_answers_table.php.stub';
-        include_once __DIR__.'/../database/migrations/create_entries_table.php.stub';
-        include_once __DIR__.'/../database/migrations/create_sections_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_surveys_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_survey_questions_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_survey_answers_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_survey_entries_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_survey_sections_table.php.stub';
 
-        (new \CreateQuestionsTable())->up();
+        (new \CreateSurveyQuestionsTable())->up();
         (new \CreateSurveysTable())->up();
-        (new \CreateEntriesTable())->up();
-        (new \CreateAnswersTable())->up();
-        (new \CreateSectionsTable())->up();
+        (new \CreateSurveyEntriesTable())->up();
+        (new \CreateSurveyAnswersTable())->up();
+        (new \CreateSurveySectionsTable())->up();
     }
 
     /**
@@ -46,7 +46,7 @@ class TestCase extends Orchestra
      */
     protected function setUpFactories()
     {
-        $this->withFactories(__DIR__.'/../database/factories');
+        $this->withFactories(__DIR__ . '/../database/factories');
     }
 
     protected function getPackageProviders($app)
@@ -65,10 +65,10 @@ class TestCase extends Orchestra
     protected function signIn(User $user = null)
     {
         $user = $user ?? User::forceCreate([
-            'name' => 'John',
-            'email' => 'john@example.com',
-            'password' => 'secret',
-        ]);
+                'name' => 'John',
+                'email' => 'john@example.com',
+                'password' => 'secret',
+            ]);
 
         $this->actingAs($user);
 

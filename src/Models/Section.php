@@ -1,19 +1,19 @@
 <?php
 
-namespace MattDaneshvar\Survey\Models;
+namespace Wimando\Survey\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Section extends Model
 {
-    /**
-     * Section constructor.
-     *
-     * @param array $attributes
-     */
+
+    use HasFactory;
+
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.sections'));
         }
 
@@ -21,18 +21,11 @@ class Section extends Model
     }
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = ['name'];
 
-    /**
-     * The questions of the section.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function questions()
+    public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
     }

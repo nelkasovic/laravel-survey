@@ -1,11 +1,11 @@
 <?php
 
-namespace MattDaneshvar\Survey\Tests;
+namespace Wimando\Survey\Tests;
 
-use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
-use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
-use MattDaneshvar\Survey\Models\Entry;
-use MattDaneshvar\Survey\Models\Survey;
+use Wimando\Survey\Exceptions\GuestEntriesNotAllowedException;
+use Wimando\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use Wimando\Survey\Models\Entry;
+use Wimando\Survey\Models\Survey;
 
 class SurveyEntryTest extends TestCase
 {

@@ -1,23 +1,15 @@
 <?php
 
-namespace MattDaneshvar\Survey\Utilities;
+namespace Wimando\Survey\Utilities;
 
-use MattDaneshvar\Survey\Models\Question;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Wimando\Survey\Models\Question;
 
 class Summary
 {
-    /**
-     * The question the summary belongs to.
-     *
-     * @var Question
-     */
-    protected $question;
 
-    /**
-     * Summary constructor.
-     *
-     * @param Question $question
-     */
+    protected Question $question;
+
     public function __construct(Question $question)
     {
         $this->question = $question;
@@ -27,9 +19,9 @@ class Summary
      * Find all answers with the same value.
      *
      * @param $value
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function similarAnswers($value)
+    public function similarAnswers($value): HasMany
     {
         return $this->question->answers()->where('value', $value);
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace MattDaneshvar\Survey\Tests;
+namespace Wimando\Survey\Tests;
 
-use MattDaneshvar\Survey\Models\Entry;
-use MattDaneshvar\Survey\Models\Question;
-use MattDaneshvar\Survey\Models\Survey;
-use MattDaneshvar\Survey\Utilities\Summary;
+use Wimando\Survey\Models\Entry;
+use Wimando\Survey\Models\Question;
+use Wimando\Survey\Models\Survey;
+use Wimando\Survey\Utilities\Summary;
 
 class SummaryTest extends TestCase
 {
