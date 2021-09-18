@@ -1,5 +1,6 @@
 # Laravel Survey
 Create and manage surveys within your Laravel app.
+I decided to fork this one `https://github.com/matt-daneshvar/laravel-survey` and modify to fit project needs.  
 
 ## Installation
 Require the package using composer.
@@ -24,7 +25,9 @@ php artisan migrate
 Creating a new `Survey` is easy! You can build your survey fluently just like 
 how you create all your `Eloquent` models in your app.  
 ```php
-$survey = Survey::create(['name' => 'Cat Population Survey']);
+$survey = SurveyFactory::create(['name' => 'Cat Population Survey']);
+
+$survey->save();
 
 $survey->questions()->create([
      'content' => 'How many cats do you have?',
@@ -46,7 +49,9 @@ $survey->questions()->create([
 #### Creating Multiple Sections
 You may also park your questions under multiple sections.
 ```php
-$survey = Survey::create(['name' => 'Cat Population Survey']);
+$survey = SurveyFactory::create(['name' => 'Cat Population Survey']);
+
+$survey->save();
 
 $one = $survey->sections()->create(['name' => 'Part One']);
 
@@ -75,7 +80,9 @@ $two->questions()->create([
 The `Entry` model comes with a `fromArray` function.  
 This is especially useful when you're creating an entry from a form submission. 
 ```php
-(new Entry)->for($survey)->fromArray([
+$entry = EntryFactory::create();
+
+$entry->for($survey)->fromArray([
     'q1' => 'Yes',
     'q2' => 5
 ])->push();
@@ -84,7 +91,9 @@ This is especially useful when you're creating an entry from a form submission.
 #### By a Specific User
 You may fluently specify the participant using the `by()` function.
 ```php
-(new Entry)->for($survey)->by($user)->fromArray($answers)->push();
+$entry = EntryFactory::create();
+
+$entry->for($survey)->by($user)->fromArray($answers)->push();
 ```
 
 ### Setting Constraints
@@ -96,7 +105,7 @@ By default, `Entry` models require a `participant_id` when being created.
 If you wish to change this behaviour and accept guest entries,
 set the `accept-guest-entries` option on your `Survey` model.  
 ```php
-Survey::create(['settings' => ['accept-guest-entries' => true]]);
+SurveyFactory::create(['settings' => ['accept-guest-entries' => true]]);
 ```
 
 #### Adjusting Entries Per Participant Limit
@@ -104,7 +113,7 @@ All `Survey` models default to accept only **1 entry** per unique participant.
 You may adjust the `limit-per-participant` option on your `Survey` model 
 or set it to `-1` to remove this limit altogether.    
 ```php
-Survey::create(['settings' => ['limit-per-participant' => 1]]);
+SurveyFactory::create(['settings' => ['limit-per-participant' => 1]]);
 ```
 *Note that this setting will be ignored if the `accept-guest-entries` option is activated.*
 
@@ -114,7 +123,7 @@ Survey::create(['settings' => ['limit-per-participant' => 1]]);
 Add in a `rules` attribute when you're creating your `Question` to specify the validation logic 
 for the answers being received. 
 ```php
-Question::create([
+QuestionFactory::create([
     'content' => 'How many cats do you have?', 
     'rules' => ['numeric', 'min:0']
 ]);
@@ -132,7 +141,9 @@ class SurveyEntriesController extends Controller
     {
         $answers = $this->validate($request, $survey);
         
-        (new Entry)->for($survey)->fromArray($answers)->push();
+        $entry = EntryFactory::create();
+        
+        $entry->for($survey)->fromArray($answers)->push();
     }
 }
 ```

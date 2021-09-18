@@ -1,7 +1,7 @@
 @component('survey::questions.base', compact('question'))
     @foreach($question->options as $option)
         <div class="custom-control custom-radio">
-            <input type="checkbox"
+            <input type="radio"
                    name="{{ $question->key }}"
                    id="{{ $question->key . '-' . Str::slug($option) }}"
                    value="{{ $option }}"
