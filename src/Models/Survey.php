@@ -69,7 +69,7 @@ class Survey extends Model
         return $this->entries()->where('participant_id', $participant->id);
     }
 
-    public function lastEntry(Model $participant): Model
+    public function lastEntry(Model $participant): ?Model
     {
         return $this->entriesFrom($participant)->first();
     }
