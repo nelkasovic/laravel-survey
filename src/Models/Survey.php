@@ -69,9 +69,9 @@ class Survey extends Model
         return $this->entries()->where('participant_id', $participant->id);
     }
 
-    public function lastEntry(Model $participant = null): ?HasMany
+    public function lastEntry(Model $participant): Model
     {
-        return $participant === null ? null : $this->entriesFrom($participant)->first();
+        return $this->entriesFrom($participant)->first();
     }
 
     public function isEligible(Model $participant = null): bool
