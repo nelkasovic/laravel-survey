@@ -10,6 +10,15 @@ use Wimando\Survey\Http\View\Composers\SurveyComposer;
 class SurveyServiceProvider extends ServiceProvider
 {
 
+    public function register()
+    {
+        $this->app->bind(\Wimando\Survey\Contracts\Answer::class, \Wimando\Survey\Models\Answer::class);
+        $this->app->bind(\Wimando\Survey\Contracts\Entry::class, \Wimando\Survey\Models\Entry::class);
+        $this->app->bind(\Wimando\Survey\Contracts\Question::class, \Wimando\Survey\Models\Question::class);
+        $this->app->bind(\Wimando\Survey\Contracts\Section::class, \Wimando\Survey\Models\Section::class);
+        $this->app->bind(\Wimando\Survey\Contracts\Survey::class, \Wimando\Survey\Models\Survey::class);
+    }
+
     public function boot(ViewFactory $viewFactory)
     {
         $this->publishes([

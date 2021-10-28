@@ -6,8 +6,10 @@ use Database\Factories\SurveyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\App;
+use Wimando\Survey\Contracts\Survey as SurveyContract;
 
-class Survey extends Model
+class Survey extends Model implements SurveyContract
 {
 
     use HasFactory;
@@ -35,17 +37,17 @@ class Survey extends Model
 
     public function sections(): HasMany
     {
-        return $this->hasMany(Section::class);
+        return $this->hasMany(get_class(App::make(Section::class)));
     }
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(get_class(App::make(Question::class)));
     }
 
     public function entries(): HasMany
     {
-        return $this->hasMany(Entry::class);
+        return $this->hasMany(get_class(App::make(Entry::class)));
     }
 
     public function acceptsGuestEntries(): bool

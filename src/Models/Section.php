@@ -6,8 +6,10 @@ use Database\Factories\SectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\App;
+use Wimando\Survey\Contracts\Section as SectionContract;
 
-class Section extends Model
+class Section extends Model implements SectionContract
 {
 
     use HasFactory;
@@ -28,7 +30,7 @@ class Section extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(get_class(App::make(Question::class)));
     }
 
     protected static function newFactory(): SectionFactory

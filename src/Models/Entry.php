@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\App;
+use Wimando\Survey\Contracts\Entry as EntryContract;
 use Wimando\Survey\Exceptions\GuestEntriesNotAllowedException;
 use Wimando\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
 
-class Entry extends Model
+class Entry extends Model implements EntryContract
 {
     /**
      * @var array
@@ -39,12 +41,12 @@ class Entry extends Model
 
     public function answers(): HasMany
     {
-        return $this->hasMany(Answer::class);
+        return $this->hasMany(get_class(App::make(Answer::class)));
     }
 
     public function survey(): BelongsTo
     {
-        return $this->belongsTo(Survey::class);
+        return $this->belongsTo(get_class(App::make(Survey::class)));
     }
 
     public function participant(): BelongsTo
@@ -73,7 +75,14 @@ class Entry extends Model
                 continue;
             }
 
-            $this->answers->add(Answer::make([
+            $answer_class = get_class(App::make(Answer::class));
+
+
+            if (gettype($value) === 'array') {
+                $value = implode(', ', $value);
+            }
+
+            $this->answers->add($answer_class::make([
                 'question_id' => substr($key, 1),
                 'entry_id' => $this->id,
                 'value' => $value,
