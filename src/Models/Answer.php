@@ -11,13 +11,12 @@ use Wimando\Survey\Contracts\Answer as AnswerContract;
 
 class Answer extends Model implements AnswerContract
 {
-
     use HasFactory;
 
     /**
      * @var array
      */
-    protected $fillable = ['value', 'question_id', 'entry_id'];
+    protected $fillable = ['value', 'question_id', 'option_id', 'entry_id'];
 
     public function __construct(array $attributes = [])
     {
@@ -41,5 +40,11 @@ class Answer extends Model implements AnswerContract
     public function question(): BelongsTo
     {
         return $this->belongsTo(get_class(App::make(Question::class)));
+    }
+
+
+    public function option(): BelongsTo
+    {
+        return $this->belongsTo(get_class(App::make(Option::class)));
     }
 }

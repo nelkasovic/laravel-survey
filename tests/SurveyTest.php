@@ -79,7 +79,6 @@ class SurveyTest extends TestCase
     /** @test */
     public function testSurveyMayHaveNoLimitsPerParticipant()
     {
-
         $survey = SurveyFactory::create([
             'settings' => ['limit-per-participant' => -1],
         ]);
@@ -98,7 +97,6 @@ class SurveyTest extends TestCase
     /** @test */
     public function testSurveyMayAcceptGuestEntries()
     {
-
         $survey = SurveyFactory::create([
             'settings' => ['accept-guest-entries' => true],
         ]);

@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Wimando\Survey\Contracts\Entry as EntryContract;
 use Wimando\Survey\Exceptions\GuestEntriesNotAllowedException;
 use Wimando\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use Wimando\Survey\Facades\Factories\Models\AnswerFactory;
 
 class Entry extends Model implements EntryContract
 {
@@ -18,17 +20,6 @@ class Entry extends Model implements EntryContract
      * @var array
      */
     protected $fillable = ['survey_id', 'participant_id'];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        //Prevent submission of entries that don't meet the parent survey's constraints.
-        static::creating(function (self $entry) {
-            $entry->validateParticipant();
-            $entry->validateMaxEntryPerUserRequirement();
-        });
-    }
 
     public function __construct(array $attributes = [])
     {
@@ -39,84 +30,15 @@ class Entry extends Model implements EntryContract
         parent::__construct($attributes);
     }
 
-    public function answers(): HasMany
+    protected static function boot(): void
     {
-        return $this->hasMany(get_class(App::make(Answer::class)));
-    }
+        parent::boot();
 
-    public function survey(): BelongsTo
-    {
-        return $this->belongsTo(get_class(App::make(Survey::class)));
-    }
-
-    public function participant(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'participant_id');
-    }
-
-    public function for(Survey $survey): Entry
-    {
-        $this->survey()->associate($survey);
-
-        return $this;
-    }
-
-    public function by(Model $model = null): Entry
-    {
-        $this->participant()->associate($model);
-
-        return $this;
-    }
-
-    public function fromArray(array $values): Entry
-    {
-        foreach ($values as $key => $value) {
-            if ($value === null) {
-                continue;
-            }
-
-            $answer_class = get_class(App::make(Answer::class));
-
-
-            if (gettype($value) === 'array') {
-                $value = implode(', ', $value);
-            }
-
-            $this->answers->add($answer_class::make([
-                'question_id' => substr($key, 1),
-                'entry_id' => $this->id,
-                'value' => $value,
-            ]));
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function answerFor(Question $question)
-    {
-        $answer = $this->answers()->where('question_id', $question->id)->first();
-
-        return isset($answer) ? $answer->value : null;
-    }
-
-    /**
-     * Save the model and all of its relationships.
-     * Ensure the answers are automatically linked to the entry.
-     *
-     * @return bool
-     */
-    public function push(): bool
-    {
-        $this->save();
-
-        foreach ($this->answers as $answer) {
-            $answer->entry_id = $this->id;
-        }
-
-        return parent::push();
+        //Prevent submission of entries that don't meet the parent survey's constraints.
+        static::creating(function (self $entry) {
+            $entry->validateParticipant();
+            $entry->validateMaxEntryPerUserRequirement();
+        });
     }
 
     /**
@@ -130,7 +52,7 @@ class Entry extends Model implements EntryContract
             return;
         }
 
-        if ($this->participant_id !== null) {
+        if (null !== $this->participant_id) {
             return;
         }
 
@@ -147,7 +69,7 @@ class Entry extends Model implements EntryContract
     {
         $limit = $this->survey->limitPerParticipant();
 
-        if ($limit === null) {
+        if (null === $limit) {
             return;
         }
 
@@ -163,5 +85,86 @@ class Entry extends Model implements EntryContract
     protected static function newFactory(): EntryFactory
     {
         return EntryFactory::new();
+    }
+
+    public function for(Survey $survey): Entry
+    {
+        $this->survey()->associate($survey);
+
+        return $this;
+    }
+
+    public function survey(): BelongsTo
+    {
+        return $this->belongsTo(get_class(App::make(Survey::class)));
+    }
+
+    public function by(Model $model = null): Entry
+    {
+        $this->participant()->associate($model);
+
+        return $this;
+    }
+
+    public function participant(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'participant_id');
+    }
+
+    public function fromArray(array $values): Entry
+    {
+        Collection::make($values)->each(function ($item, $key) {
+            $this->addAnswers(substr($key, 1), $item);
+        });
+
+        return $this;
+    }
+
+    public function addAnswers(int $questionId, array $options): Entry
+    {
+        Collection::make($options)->each(function ($value, $optionId) use ($questionId) {
+            $this->answers->add(
+                AnswerFactory::create([
+                    'question_id' => $questionId,
+                    'option_id' => $optionId,
+                    'entry_id' => $this->id,
+                    'value' => $value,
+                ])
+            );
+        });
+
+        return $this;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function answerFor(Question $question)
+    {
+        $answer = $this->answers()
+            ->where('question_id', $question->id)
+            ->first();
+
+        return isset($answer) ? $answer->value : null;
+    }
+
+    public function answers(): HasMany
+    {
+        return $this->hasMany(get_class(App::make(Answer::class)));
+    }
+
+    /**
+     * Save the model and all of its relationships.
+     * Ensure the answers are automatically linked to the entry.
+     */
+    public function push(): bool
+    {
+        $this->save();
+
+        $this->answers()->each(function (Answer $answer) {
+            $answer->entry_id = $this->id;
+        });
+
+        return parent::push();
     }
 }

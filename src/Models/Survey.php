@@ -11,8 +11,18 @@ use Wimando\Survey\Contracts\Survey as SurveyContract;
 
 class Survey extends Model implements SurveyContract
 {
-
     use HasFactory;
+
+    /**
+     * @var array
+     */
+    protected $fillable = ['name', 'settings'];
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'settings' => 'array',
+    ];
 
     public function __construct(array $attributes = [])
     {
@@ -23,17 +33,10 @@ class Survey extends Model implements SurveyContract
         parent::__construct($attributes);
     }
 
-    /**
-     * @var array
-     */
-    protected $fillable = ['name', 'settings'];
-
-    /**
-     * @var array
-     */
-    protected $casts = [
-        'settings' => 'array',
-    ];
+    protected static function newFactory(): SurveyFactory
+    {
+        return SurveyFactory::new();
+    }
 
     public function sections(): HasMany
     {
@@ -45,9 +48,32 @@ class Survey extends Model implements SurveyContract
         return $this->hasMany(get_class(App::make(Question::class)));
     }
 
+    public function lastEntry(Model $participant): ?Model
+    {
+        return $this->entriesFrom($participant)->first();
+    }
+
+    public function entriesFrom(Model $participant): HasMany
+    {
+        return $this->entries()->where('participant_id', $participant->id);
+    }
+
     public function entries(): HasMany
     {
         return $this->hasMany(get_class(App::make(Entry::class)));
+    }
+
+    public function isEligible(Model $participant = null): bool
+    {
+        if (null === $participant) {
+            return $this->acceptsGuestEntries();
+        }
+
+        if (null === $this->limitPerParticipant()) {
+            return true;
+        }
+
+        return $this->limitPerParticipant() > $this->entriesFrom($participant)->count();
     }
 
     public function acceptsGuestEntries(): bool
@@ -63,30 +89,7 @@ class Survey extends Model implements SurveyContract
 
         $limit = $this->settings['limit-per-participant'] ?? 1;
 
-        return $limit !== -1 ? $limit : null;
-    }
-
-    public function entriesFrom(Model $participant): HasMany
-    {
-        return $this->entries()->where('participant_id', $participant->id);
-    }
-
-    public function lastEntry(Model $participant): ?Model
-    {
-        return $this->entriesFrom($participant)->first();
-    }
-
-    public function isEligible(Model $participant = null): bool
-    {
-        if ($participant === null) {
-            return $this->acceptsGuestEntries();
-        }
-
-        if ($this->limitPerParticipant() === null) {
-            return true;
-        }
-
-        return $this->limitPerParticipant() > $this->entriesFrom($participant)->count();
+        return -1 !== $limit ? $limit : null;
     }
 
     /**
@@ -96,13 +99,17 @@ class Survey extends Model implements SurveyContract
      */
     public function getRulesAttribute()
     {
-        return $this->questions->mapWithKeys(function ($question) {
+        return $this->questions->mapWithKeys(function (Question $question) {
+            if (!$question->rules) {
+                return [];
+            }
+            if ($question->isSimpleType()) {
+                return $question->options->mapWithKeys(function ($option) use ($question) {
+                    return [$question->key.'.'.$option->id => $question->rules];
+                })->all();
+            }
+
             return [$question->key => $question->rules];
         })->all();
-    }
-
-    protected static function newFactory(): SurveyFactory
-    {
-        return SurveyFactory::new();
     }
 }

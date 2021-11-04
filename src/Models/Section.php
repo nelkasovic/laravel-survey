@@ -11,7 +11,6 @@ use Wimando\Survey\Contracts\Section as SectionContract;
 
 class Section extends Model implements SectionContract
 {
-
     use HasFactory;
 
     public function __construct(array $attributes = [])

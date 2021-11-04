@@ -6,6 +6,7 @@ use Database\Factories\QuestionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\App;
 use Wimando\Survey\Contracts\Question as QuestionContract;
 
@@ -13,15 +14,28 @@ class Question extends Model implements QuestionContract
 {
     use HasFactory;
 
+    const QUESTION_TYPE_RADIO = 'radio';
+    const QUESTION_TYPE_CHECKBOX = 'checkbox';
+    const QUESTION_TYPE_TEXT = 'text';
+    const QUESTION_TYPE_NUMBER = 'number';
+
     /**
      * @var array
      */
-    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id'];
+    protected $fillable = ['type', 'content', 'rules', 'survey_id'];
 
     protected $casts = [
         'rules' => 'array',
-        'options' => 'array',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        if (!isset($this->table)) {
+            $this->setTable(config('survey.database.tables.questions'));
+        }
+
+        parent::__construct($attributes);
+    }
 
     protected static function boot(): void
     {
@@ -35,15 +49,24 @@ class Question extends Model implements QuestionContract
                 $question->survey_id = $question->section->survey_id;
             }
         });
+
+        static::saved(function (self $question) {
+            if ('number' === $question->type || 'text' === $question->type) {
+                $question->options()->updateOrCreate([
+                    'question_id' => $question->id,
+                ]);
+            }
+        });
     }
 
-    public function __construct(array $attributes = [])
+    public function options(): HasMany
     {
-        if (!isset($this->table)) {
-            $this->setTable(config('survey.database.tables.questions'));
-        }
+        return $this->hasMany(get_class(App::make(Option::class)));
+    }
 
-        parent::__construct($attributes);
+    protected static function newFactory(): QuestionFactory
+    {
+        return QuestionFactory::new();
     }
 
     public function survey(): BelongsTo
@@ -56,20 +79,21 @@ class Question extends Model implements QuestionContract
         return $this->belongsTo(get_class(App::make(Section::class)));
     }
 
-    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function answers(): HasMany
     {
         return $this->hasMany(get_class(App::make(Answer::class)));
     }
 
     /**
      * @param $value
+     *
      * @return array|mixed
      */
     public function getRulesAttribute($value)
     {
         $value = $this->castAttribute('rules', $value);
 
-        return $value !== null ? $value : [];
+        return null !== $value ? $value : [];
     }
 
     public function getKeyAttribute(): string
@@ -77,11 +101,17 @@ class Question extends Model implements QuestionContract
         return "q{$this->id}";
     }
 
+    public function getFirstOption()
+    {
+        return $this->options()->first();
+    }
+
     /**
      * Scope a query to only include questions that
      * don't belong to any sections.
      *
      * @param $query
+     *
      * @return mixed
      */
     public function scopeWithoutSection($query)
@@ -89,8 +119,15 @@ class Question extends Model implements QuestionContract
         return $query->where('section_id', null);
     }
 
-    protected static function newFactory(): QuestionFactory
+    public function isSimpleType(): bool
     {
-        return QuestionFactory::new();
+        if (self::QUESTION_TYPE_NUMBER === $this->type) {
+            return true;
+        }
+        if (self::QUESTION_TYPE_TEXT === $this->type) {
+            return true;
+        }
+
+        return false;
     }
 }

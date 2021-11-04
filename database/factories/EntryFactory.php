@@ -7,7 +7,6 @@ use Wimando\Survey\Models\Entry;
 
 class EntryFactory extends Factory
 {
-
     protected $model = Entry::class;
 
     public function definition(): array

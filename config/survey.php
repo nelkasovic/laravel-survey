@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'database' => [
         /*
          * Name of the tables created by the migrations
@@ -13,6 +12,7 @@ return [
             'questions' => 'survey_questions',
             'entries' => 'survey_entries',
             'answers' => 'survey_answers',
+            'options' => 'survey_options',
         ],
     ],
 ];

@@ -3,20 +3,18 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Wimando\Survey\Models\Answer;
 use Wimando\Survey\Models\Option;
 use Wimando\Survey\Models\Question;
 
-class AnswerFactory extends Factory
+class OptionFactory extends Factory
 {
-    protected $model = Answer::class;
+    protected $model = Option::class;
 
     public function definition(): array
     {
         return [
             'value' => $this->faker->words(3, true),
             'question_id' => Question::factory()->create()->id,
-            'option_id' => Option::factory()->create()->id,
         ];
     }
 }

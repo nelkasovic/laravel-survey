@@ -1,16 +1,16 @@
 @component('survey::questions.base', compact('question'))
     @foreach($question->options as $option)
-        <div class="custom-control custom-radio">
-            <input type="checkbox"
-                   name="{{ $question->key }}"
-                   id="{{ $question->key . '-' . Str::slug($option) }}"
-                   value="{{ $option }}"
-                   class="custom-control-input"
-                    {{ ($value ?? old($question->key)) == $option ? 'checked' : '' }}
+        <div class="form-check mb-1">
+            <input type="radio"
+                   name="{{ $question->key }}[{{$option->id}}]"
+                   id="{{ $question->key . '-' . $option->id}}"
+                   value="{{ $option->value }}"
+                   class="form-check-input"
+                    {{ ($value ?? old($question->key)) == $option->value ? 'checked' : '' }}
                     {{ ($disabled ?? false) ? 'disabled' : '' }}
             >
-            <label class="custom-control-label"
-                   for="{{ $question->key . '-' . Str::slug($option) }}">{{ $option }}
+            <label class="form-check-label ms-1"
+                   for="{{ $question->key . '-' . $option->id }}">{{ $option->value }}
                 @if($includeResults ?? false)
                     <span class="text-success">
                         ({{ number_format((new \Wimando\Survey\Utilities\Summary($question))->similarAnswersRatio($option) * 100, 2) }}%)

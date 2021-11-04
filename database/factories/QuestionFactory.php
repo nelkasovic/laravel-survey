@@ -7,7 +7,6 @@ use Wimando\Survey\Models\Question;
 
 class QuestionFactory extends Factory
 {
-
     protected $model = Question::class;
 
     public function definition(): array

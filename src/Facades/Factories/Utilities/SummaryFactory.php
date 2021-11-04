@@ -3,10 +3,10 @@
 namespace Wimando\Survey\Facades\Factories\Utilities;
 
 use Illuminate\Support\Facades\Facade;
-use Wimando\Survey\Models\Survey;
+use Wimando\Survey\Utilities\Summary;
 
 /**
- * @method static Survey create(array $attributes)
+ * @method static Summary create(array $attributes = [])
  */
 class SummaryFactory extends Facade
 {

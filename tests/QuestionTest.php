@@ -2,7 +2,7 @@
 
 namespace Wimando\Survey\Tests;
 
-use Wimando\Survey\Facades\Factories\Models\QuestionFactory;
+use Wimando\Survey\Models\Option;
 use Wimando\Survey\Models\Question;
 use Wimando\Survey\Models\Survey;
 
@@ -27,7 +27,6 @@ class QuestionTest extends TestCase
     /** @test */
     public function testQuestionHasKey()
     {
-
         $question = Question::factory()->create();
         $this->assertNotNull($question->key);
     }
@@ -35,7 +34,7 @@ class QuestionTest extends TestCase
     /** @test */
     public function testQuestionMayHaveRules()
     {
-        $question = QuestionFactory::create([
+        $question = Question::factory()->create([
             'content' => 'How many cats do you have?',
             'rules' => ['numeric', 'min:1'],
         ]);
@@ -46,9 +45,10 @@ class QuestionTest extends TestCase
     /** @test */
     public function testQuestionMayHaveOptions()
     {
-        $question = QuestionFactory::create([
-            'content' => 'How many cats do you have?',
-            'options' => ['One', 'Two', 'Three'],
+        /** @var Question $question */
+        $question = Question::factory()->create();
+        Option::factory()->count(3)->create([
+            'question_id' => $question->id,
         ]);
 
         $this->assertCount(3, $question->options);

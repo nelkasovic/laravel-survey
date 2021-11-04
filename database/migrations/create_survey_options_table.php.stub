@@ -4,22 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSurveyAnswersTable extends Migration
+class CreateSurveyOptionsTable extends Migration
 {
     public function up(): void
     {
-        Schema::create(config('survey.database.tables.answers'), function (Blueprint $table) {
+        Schema::create(config('survey.database.tables.options'), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('value');
+            $table->string('value')->nullable();
             $table->unsignedInteger('question_id');
-            $table->unsignedInteger('option_id');
-            $table->unsignedInteger('entry_id')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists(config('survey.database.tables.answers'));
+        Schema::dropIfExists(config('survey.database.tables.options'));
     }
 }

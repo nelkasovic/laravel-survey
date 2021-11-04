@@ -3,11 +3,11 @@
 namespace Wimando\Survey\Utilities;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Wimando\Survey\Models\Answer;
 use Wimando\Survey\Models\Question;
 
 class Summary
 {
-
     protected Question $question;
 
     public function __construct(Question $question)
@@ -19,7 +19,6 @@ class Summary
      * Find all answers with the same value.
      *
      * @param $value
-     * @return HasMany
      */
     public function similarAnswers($value): HasMany
     {
@@ -30,6 +29,7 @@ class Summary
      * Find the ratio of similar answers to all other answers.
      *
      * @param $value
+     *
      * @return float|int
      */
     public function similarAnswersRatio($value)

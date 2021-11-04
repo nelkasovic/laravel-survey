@@ -1,5 +1,5 @@
 @component('survey::questions.base', compact('question'))
-    @foreach ($question->options as $option)
+    @foreach($question->options as $option)
         <div class="custom-control custom-checkbox">
             <input type="checkbox"
                    name="{{ $question->key }}[]"

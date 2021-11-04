@@ -2,6 +2,6 @@
 
 namespace Wimando\Survey\Contracts;
 
-interface Answer
+interface Option
 {
 }

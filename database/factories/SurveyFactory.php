@@ -7,7 +7,6 @@ use Wimando\Survey\Models\Survey;
 
 class SurveyFactory extends Factory
 {
-
     protected $model = Survey::class;
 
     public function definition(): array

@@ -15,7 +15,6 @@ class CreateSurveyQuestionsTable extends Migration
             $table->unsignedInteger('section_id')->nullable();
             $table->string('content');
             $table->string('type')->default('text');
-            $table->json('options')->nullable();
             $table->json('rules')->nullable();
             $table->timestamps();
         });
