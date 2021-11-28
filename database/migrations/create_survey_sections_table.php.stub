@@ -13,6 +13,7 @@ class CreateSurveySectionsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('survey_id')->nullable();
             $table->string('name');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

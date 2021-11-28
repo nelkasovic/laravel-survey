@@ -16,7 +16,7 @@ class Option extends Model implements OptionContract
     /**
      * @var array
      */
-    protected $fillable = ['value', 'question_id'];
+    protected $fillable = ['value', 'description', 'question_id'];
 
     public function __construct(array $attributes = [])
     {

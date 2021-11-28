@@ -15,6 +15,7 @@ class OptionFactory extends Factory
         return [
             'value' => $this->faker->words(3, true),
             'question_id' => Question::factory()->create()->id,
+            'description' => $this->faker->text,
         ];
     }
 }

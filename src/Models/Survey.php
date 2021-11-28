@@ -16,7 +16,7 @@ class Survey extends Model implements SurveyContract
     /**
      * @var array
      */
-    protected $fillable = ['name', 'settings'];
+    protected $fillable = ['name', 'settings', 'description'];
     /**
      * @var array
      */
@@ -63,6 +63,16 @@ class Survey extends Model implements SurveyContract
         return $this->hasMany(get_class(App::make(Entry::class)));
     }
 
+    public function getSurveyIcon():?string
+    {
+        return $this->settings['survey-icon'] ?? null;
+    }
+
+    public function getSurveyHeader():?string
+    {
+        return $this->settings['survey-header'] ?? null;
+    }
+
     public function isEligible(Model $participant = null): bool
     {
         if (null === $participant) {
@@ -105,7 +115,7 @@ class Survey extends Model implements SurveyContract
             }
             if ($question->isSimpleType()) {
                 return $question->options->mapWithKeys(function ($option) use ($question) {
-                    return [$question->key.'.'.$option->id => $question->rules];
+                    return [$question->key . '.' . $option->id => $question->rules];
                 })->all();
             }
 

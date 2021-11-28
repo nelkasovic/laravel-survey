@@ -13,6 +13,7 @@ class QuestionFactory extends Factory
     {
         return [
             'content' => $this->faker->name,
+            'description' => $this->faker->text,
         ];
     }
 }

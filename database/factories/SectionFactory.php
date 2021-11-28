@@ -13,6 +13,7 @@ class SectionFactory extends Factory
     {
         return [
             'name' => $this->faker->words(5),
+            'description' => $this->faker->text,
         ];
     }
 }

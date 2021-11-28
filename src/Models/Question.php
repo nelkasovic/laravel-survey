@@ -22,7 +22,7 @@ class Question extends Model implements QuestionContract
     /**
      * @var array
      */
-    protected $fillable = ['type', 'content', 'rules', 'survey_id'];
+    protected $fillable = ['type', 'content', 'description', 'rules', 'survey_id'];
 
     protected $casts = [
         'rules' => 'array',
